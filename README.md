@@ -1,18 +1,18 @@
-#  NAiBot 
+# 🤖 NAiBot API
 
-> **NaiLand's AI-powered onboarding and navigation assistant — production-ready REST API deployed on Render.**
+> **NaiLand's AI-powered onboarding and navigation assistant — now running on Google Colab GPU with Ugonna's fine-tuned Llama-3.1 8B model.**
 
-[![CI](https://github.com/YOUR_ORG/naibot-api/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/naibot-api/actions)
+[![Colab](https://img.shields.io/badge/Launch-Colab-orange)](https://colab.research.google.com/github/YOUR_USERNAME/naibot-api/blob/main/naibot_colab_deployment.ipynb)
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)
-![Render](https://img.shields.io/badge/Deploy-Render-purple)
+![Model](https://img.shields.io/badge/Model-Llama%203.1%208B-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
 ## 📌 Overview
 
-NAiBot is NaiLand's intelligent onboarding assistant. It welcomes new users, guides them through the platform, answers questions about features, and navigates users to the right sections — all through a clean REST API that any frontend or mobile client can integrate with.
+NAiBot is NaiLand's intelligent onboarding assistant, now **running on free GPU (T4) via Google Colab**. It welcomes new users, guides them through the platform, answers questions, and navigates users — with fast inference powered by Ugonna's fine-tuned Llama-3.1 8B model.
 
 **Built by the NaiLand AI/ML team (Kwanele & Ugonna).**
 
@@ -20,13 +20,13 @@ NAiBot is NaiLand's intelligent onboarding assistant. It welcomes new users, gui
 
 ## ✨ Features
 
-- 🧠 LLM-powered conversational responses via a fine-tuned / prompted model
-- 🚀 FastAPI backend with async support
-- 🔒 CORS-configurable for secure frontend integration
-- 📡 `/health` endpoint for uptime monitoring (UptimeRobot / Render health checks)
-- 🗂️ Session ID support for multi-turn conversation tracking
-- 🐳 Render-native deployment with persistent disk for model weights
-- 📖 Auto-generated API docs at `/docs` (Swagger) and `/redoc`
+- 🚀 **GPU-Powered:** Runs on Google Colab's free T4 GPU (instant responses, ~2-3 sec per request)
+- 🧠 **Fine-Tuned Model:** Ugonna's Llama-3.1 8B (`ugonna/llama3.18B-Fine-tunedByUgo3`)
+- 🔗 **Public URL:** Auto-exposed via ngrok — share with your team instantly
+- 📡 `/health` endpoint for monitoring
+- 🗂️ Session ID support for multi-turn conversations
+- 📖 Auto-generated API docs at `/docs` (Swagger)
+- ✅ CORS-enabled for frontend integration
 
 ---
 
@@ -36,113 +36,61 @@ NAiBot is NaiLand's intelligent onboarding assistant. It welcomes new users, gui
 naibot-api/
 ├── app/
 │   ├── __init__.py
-│   └── main.py              # FastAPI app, model manager, routes
+│   └── main.py                      # FastAPI app (production Render version)
 ├── scripts/
-│   └── download_model.py    # One-time model download to Render disk
+│   └── download_model.py            # Model downloader (Render)
 ├── tests/
-│   └── test_api.py          # Pytest smoke tests
-├── .github/
-│   └── workflows/
-│       └── ci.yml           # GitHub Actions CI pipeline
-├── .env.example             # Environment variable template
-├── .gitignore
-├── render.yaml              # Render deployment configuration
+│   └── test_api.py                  # Unit tests
+├── naibot_colab_deployment.ipynb   # 👈 COLAB NOTEBOOK (run this!)
+├── .github/workflows/
+│   └── ci.yml                       # GitHub Actions CI
+├── render.yaml                      # Render deployment config
 ├── requirements.txt
-└── README.md
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## 🚀 Quick Start (Local)
+## 🚀 Quick Start — Google Colab (Recommended for Now)
 
-### 1. Clone the repository
+### 1️⃣ Click the Colab button above ↑
 
-```bash
-git clone https://github.com/YOUR_ORG/naibot-api.git
-cd naibot-api
-```
+Or go here: **[Open NAiBot Colab Notebook](https://colab.research.google.com/github/YOUR_USERNAME/naibot-api/blob/main/naibot_colab_deployment.ipynb)**
 
-### 2. Create virtual environment
+### 2️⃣ Set GPU Runtime
 
-```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
+- Runtime → Change runtime type → **T4 GPU** → Save
 
-### 3. Configure environment
+### 3️⃣ Get ngrok Auth Token (2 minutes)
 
-```bash
-cp .env.example .env
-# Edit .env — set HF_TOKEN and MODEL_PATH
-```
+1. Go to [ngrok.com](https://ngrok.com) → **Sign up** (free)
+2. Dashboard → **Get your authtoken**
+3. Paste it into **Cell 3** of the notebook
 
-### 4. Download model (first time only)
+### 4️⃣ Run cells in order
 
-```bash
-python scripts/download_model.py
-```
-
-### 5. Run the server
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-API is now live at **http://localhost:8000**
-Interactive docs at **http://localhost:8000/docs**
-
----
-
-## ☁️ Deploy to Render (Step-by-Step)
-
-### Step 1 — Push to GitHub
-
-```bash
-git init
-git remote add origin https://github.com/YOUR_ORG/naibot-api.git
-git add .
-git commit -m "feat: initial NAiBot API"
-git push -u origin main
-```
-
-### Step 2 — Create Web Service on Render
-
-1. Go to [render.com](https://render.com) → **New → Web Service**
-2. Connect your GitHub repo
-3. Render auto-detects `render.yaml` — click **Apply**
-
-### Step 3 — Set Environment Variables (Render Dashboard)
-
-| Key | Value |
+| Cell | What it does |
 |---|---|
-| `HF_TOKEN` | Your Hugging Face access token |
-| `MODEL_PATH` | `/opt/render/project/src/models` |
-| `ALLOWED_ORIGINS` | Your frontend domain (e.g. `https://nailand.app`) |
+| 1 | ✅ Verify GPU available |
+| 2 | 📦 Install dependencies |
+| 3 | 🔐 Configure ngrok |
+| 4 | ⚙️ Define FastAPI + NAiBot |
+| 5 | 📥 Download Ugonna's model (first run ~5 min) |
+| 6 | 🚀 Start server + expose URL |
+| 7 | 🧪 Test the API |
 
-### Step 4 — Add Persistent Disk
+### 5️⃣ You're live!
 
-In your Render service: **Settings → Disks → Add Disk**
+After Cell 6 completes, you'll see:
 
-| Field | Value |
-|---|---|
-| Name | `model-storage` |
-| Mount Path | `/opt/render/project/src/models` |
-| Size | `20 GB` (adjust for your model) |
-
-### Step 5 — Download Model to Disk (One Time)
-
-In Render's **Shell** tab (after first deploy):
-
-```bash
-HF_TOKEN=your_token MODEL_NAME=TinyLlama/TinyLlama-1.1B-Chat-v1.0 python scripts/download_model.py
+```
+🌐 Public URL: https://abc123-xyz.ngrok.io
+📖 API Docs: https://abc123-xyz.ngrok.io/docs
+🔗 Health: https://abc123-xyz.ngrok.io/health
 ```
 
-> ⚠️ For gated models like Llama-2 or Mistral, you must [request access on Hugging Face](https://huggingface.co) first.
-
-### Step 6 — Redeploy
-
-Trigger a redeploy from the Render dashboard. The model loads from disk on startup.
+**Share that URL with your team.** It's your live API endpoint.
 
 ---
 
@@ -150,18 +98,16 @@ Trigger a redeploy from the Render dashboard. The model loads from disk on start
 
 ### `GET /health`
 
-Check if NAiBot and the model are ready.
-
 ```bash
-curl https://your-service.onrender.com/health
+curl https://your-ngrok-url.ngrok.io/health
 ```
 
 ```json
 {
   "status": "ready",
   "model_loaded": true,
-  "device": "cpu",
-  "version": "1.0.0"
+  "device": "cuda:0",
+  "version": "1.0.0-colab"
 }
 ```
 
@@ -169,34 +115,23 @@ curl https://your-service.onrender.com/health
 
 ### `POST /chat`
 
-Send a message to NAiBot.
-
 ```bash
-curl -X POST https://your-service.onrender.com/chat \
+curl -X POST https://your-ngrok-url.ngrok.io/chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "How do I get started on NaiLand?",
-    "session_id": "user-abc-123",
+    "session_id": "user-123",
     "max_tokens": 300,
     "temperature": 0.7
   }'
 ```
-
-**Request body:**
-
-| Field | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `message` | string | ✅ | — | User's message (1–2048 chars) |
-| `session_id` | string | ❌ | auto-generated | For tracking sessions |
-| `max_tokens` | int | ❌ | 512 | Max response length |
-| `temperature` | float | ❌ | 0.7 | Response creativity (0.1–1.5) |
 
 **Response:**
 
 ```json
 {
   "id": "a3f2c1d0-...",
-  "session_id": "user-abc-123",
+  "session_id": "user-123",
   "reply": "Welcome to NaiLand! Let me walk you through getting started...",
   "model_loaded": true,
   "created": 1749301200
@@ -205,43 +140,142 @@ curl -X POST https://your-service.onrender.com/chat \
 
 ---
 
-## ⚙️ Render Plan Guide
+## 💡 Why Google Colab?
 
-| Plan | RAM | CPU | Suitable For |
+| Aspect | Colab | Render Free | Render Paid |
 |---|---|---|---|
-| Free | 512 MB | Shared | ❌ Not enough for LLMs |
-| Starter | 512 MB | 0.5 | Small models only (TinyLlama ~1B) |
-| Standard | 2 GB | 1 | Quantized 7B models (4-bit) |
-| Professional | 4 GB | 2 | Full 7B/8B models |
+| **GPU** | T4 (free) | ❌ None | ✅ (paid) |
+| **Inference Speed** | ~2-3 sec | N/A | ~3-5 sec |
+| **Cost** | Free | Free | $7+/month |
+| **Uptime** | 12 hours | 24/7 | 24/7 |
+| **Best for** | Dev & demos | Small models | Production |
 
-> 💡 **Recommendation:** Use **Standard ($7/mo)** for 4-bit quantized 7B models. Add [UptimeRobot](https://uptimerobot.com) (free) to ping `/health` every 10 minutes and prevent cold starts.
+**For right now:** Colab is perfect. You get a free GPU and instant API for your team to test.
+
+**For production later:** Render Standard ($7/month) with persistent disk for 24/7 uptime.
 
 ---
 
-## 🧪 Running Tests
+## 🔄 Workflow Going Forward
 
+```
+1. You run Colab notebook
+   ↓
+2. ngrok exposes your server
+   ↓
+3. Frontend hits the ngrok URL
+   ↓
+4. NAiBot responds (powered by Ugonna's model on GPU)
+   ↓
+5. Share new ngrok URL with team each session
+```
+
+---
+
+## ⚠️ Important Notes
+
+**Colab Session:**
+- Notebooks run for up to 12 hours before auto-disconnecting
+- To keep it alive, click **Runtime → Run all** periodically or use a [Colab Extension](https://github.com/kaushikjadhav01/Google-Colab-AutoRefresh)
+- Restart = new ngrok URL (share it with your team)
+
+**Model Loading:**
+- First run: Downloads Ugonna's 8B model (~5-7GB, takes ~5 minutes)
+- Subsequent runs: Uses cached weights (instant startup)
+
+**GPU Memory:**
+- Model uses ~6-7GB VRAM
+- T4 has 15GB total — plenty of headroom
+
+**ngrok Free Plan:**
+- URLs are public and expire when you close the tunnel
+- Bandwidth is limited to ~1GB/month (enough for testing)
+- For production, upgrade to paid ngrok ($5/month) or use Render
+
+---
+
+## 🛠️ Local Development (Optional)
+
+If you want to test on your PC before Colab:
+
+```bash
+# Create venv
+python -m venv venv
+source venv\Scripts\activate        # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Download TinyLlama (small CPU-friendly model)
+python scripts/download_model.py
+
+# Run server
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Then open **http://localhost:8000/docs**
+
+---
+
+## 📊 Model Specs
+
+**Ugonna's Fine-Tuned Model:**
+- Base: Meta Llama-3.1 8B
+- Fine-tuned for: NaiLand onboarding tasks
+- Repo: `ugonna/llama3.18B-Fine-tunedByUgo3`
+- Parameters: 8 billion
+- Precision: float16 (GPU)
+- License: Llama 3.1 Community License
+
+---
+
+## 🚢 Production Deployment (Later)
+
+When you're ready to move to 24/7 production:
+
+1. **Push to GitHub** (you're already here!)
+2. **Deploy to Render:**
+   - Connect repo → pick `render.yaml`
+   - Add persistent disk for model cache
+   - Render auto-pulls from Hugging Face
+3. **Update frontend** to use Render URL instead of ngrok
+
+See the **Render Deployment** section at the end of this README.
+
+---
+
+## 🧪 Testing
+
+**From Colab (Cell 7):**
+Notebook includes a test cell that auto-runs `/health` and `/chat` against your live API.
+
+**From your PC (after downloading model):**
 ```bash
 pytest tests/ -v
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 👥 Team
 
-- **Runtime:** Python 3.10
-- **Framework:** FastAPI + Uvicorn
-- **ML:** PyTorch + Hugging Face Transformers
-- **Deployment:** Render (Web Service + Persistent Disk)
-- **CI:** GitHub Actions
+| Name | Role | Model |
+|---|---|---|
+| Kwanele | API & Deployment | FastAPI, Render, Colab |
+| Ugonna | Fine-tuning & ML | Llama-3.1 8B (`ugonna/llama3.18B-Fine-tunedByUgo3`) |
 
 ---
 
-## 👥 Team
+## 📝 Colab Deployment Checklist
 
-| Name | Role |
-|---|---|
-| Kwanele | AI/ML Team|
-| Ugonna | AI/ML Team |
+- [ ] Push this repo to GitHub
+- [ ] Click the Colab badge above
+- [ ] Enable T4 GPU (Runtime → Change runtime type)
+- [ ] Get ngrok auth token from https://ngrok.com
+- [ ] Fill in Cell 3 with your token
+- [ ] Run all cells in order
+- [ ] Copy the ngrok URL and share with team
+- [ ] Test at `/docs` in your browser
+- [ ] Make a commit with this README
 
 ---
 
@@ -251,4 +285,13 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-*NAiBot is part of the NaiLand platform. For support, contact the NaiLand AI team.*
+## 🔗 Quick Links
+
+- **GitHub Repo:** [naibot-api](https://github.com/YOUR_USERNAME/naibot-api)
+- **Ugonna's Model:** [huggingface.co/ugonna](https://huggingface.co/ugonna)
+- **Google Colab:** [colab.research.google.com](https://colab.research.google.com)
+- **ngrok:** [ngrok.com](https://ngrok.com)
+
+---
+
+*NAiBot is part of the NaiLand platform. Built with ❤️ by the AI/ML team.*
